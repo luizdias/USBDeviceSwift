@@ -9,7 +9,6 @@
 import Foundation
 import IOKit.serial
 
-
 public extension Notification.Name {
     static let SerialDeviceAdded = Notification.Name("SerialDeviceAdded")
     static let SerialDeviceRemoved = Notification.Name("SerialDeviceRemoved")

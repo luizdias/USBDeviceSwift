@@ -104,7 +104,7 @@ class ViewController: NSViewController, NSComboBoxDataSource {
             return
         }
         DispatchQueue.main.async {
-            if let index = self.devices.index(where: { $0.deviceInfo.id == id }) {
+            if let index = self.devices.firstIndex(where: { $0.deviceInfo.id == id }) {
                 self.devices.remove(at: index)
                 if (id == self.connectedDevice?.deviceInfo.id) {
                     self.connectButton.title = "Connect"

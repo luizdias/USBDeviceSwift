@@ -39,20 +39,28 @@ class STM32Device {
             throw STM32DeviceError.DeviceInterfaceNotFound
         }
         
-        var kr:Int32 = 0
-        let length:Int = 6
-        var requestPtr:[UInt8] = [UInt8](repeating: 0, count: length)
-        // Creating request
-        var request = IOUSBDevRequest(bmRequestType: 161,
-                                      bRequest: STM32REQUEST.GETSTATUS.rawValue,
-                                      wValue: 0,
-                                      wIndex: 0,
-                                      wLength: UInt16(length),
-                                      pData: &requestPtr,
-                                      wLenDone: 255)
+        var kr: Int32 = 0
+        let length: Int = 6
+        var requestPtr: [UInt8] = [UInt8](repeating: 0, count: length)
         
-        kr = deviceInterface.DeviceRequest(self.deviceInfo.deviceInterfacePtrPtr, &request)
-        
+        // Create a Data object containing your request data
+        var requestData = Data(count: length)
+        requestData.copyBytes(to: &requestPtr, count: length)
+
+        // Use withUnsafeMutableBytes to obtain a pointer to the underlying memory of requestData
+        requestData.withUnsafeMutableBytes { requestDataPtr in
+            // Creating request
+            var request = IOUSBDevRequest(bmRequestType: 161,
+                                          bRequest: STM32REQUEST.GETSTATUS.rawValue,
+                                          wValue: 0,
+                                          wIndex: 0,
+                                          wLength: UInt16(length),
+                                          pData: requestDataPtr.baseAddress, // Pass the pointer to pData
+                                          wLenDone: 255)
+            
+            kr = deviceInterface.DeviceRequest(self.deviceInfo.deviceInterfacePtrPtr, &request)
+        }
+
         if (kr != kIOReturnSuccess) {
             throw STM32DeviceError.RequestError(desc: "Get device status request error: \(kr)")
         }
