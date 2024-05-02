@@ -29,10 +29,10 @@ public struct SerialDevice {
 }
 
 extension SerialDevice: Hashable {
-    public var hashValue: Int {
-        return "\(path)".hashValue
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(path)
     }
-    
+
     public static func ==(lhs: SerialDevice, rhs: SerialDevice) -> Bool {
         return lhs.path == rhs.path
     }
